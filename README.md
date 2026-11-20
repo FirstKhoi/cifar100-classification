@@ -60,7 +60,7 @@ The training recipe mattered far more than the architecture here: +43.7 points w
 - `torchvision` ConvNeXt-Tiny with ImageNet-1K weights, last linear layer replaced with a 100-class one.
 - Images upscaled from 32x32 to 224x224 (bicubic), ImageNet mean/std. Train augmentations: RandomResizedCrop (scale 0.8–1.0), horizontal flip, RandomErasing (p=0.25).
 - AdamW (weight_decay 1e-2), lr 1e-4 for the backbone and 1e-3 for the head. 2-epoch linear warmup, then cosine decay. Label smoothing 0.1, gradient clipping at 1.0. 15 epochs, batch 128.
-- Flip TTA gave +0.23% (90.41% → 90.64%). Adding a 0.9x center zoom as extra views made it slightly worse (90.57%), probably because cropping an upscaled 32x32 image throws away real content.
+- Flip TTA gave +0.23% (90.41% → 90.64%).
 
 ![ConvNeXt-Tiny v5 training curves](training_evaluation/cifar100_v5_convnext_tiny_transfer.png)
 
@@ -108,6 +108,6 @@ Breakdown of the 676 test errors of v8. Most errors are confusions between class
 
 ## Speed notes (L4)
 
-- DataLoader: 4 workers for 32x32, 6 for 224x224, `pin_memory`, `persistent_workers`, `prefetch_factor=4`, `non_blocking` copies. This cut data loading from 9.03 s to 4.58 s per epoch on the 32x32 runs.
+- DataLoader: 4 workers for 32x32, 6 for 224x224, `pin_memory`, `persistent_workers`, `prefetch_factor=4`, `non_blocking` copies.
 - bfloat16 autocast, so no GradScaler needed.
 - 45k images at 224x224, batch 128: about 140 s/epoch for ConvNeXt-Tiny and 212 s/epoch for ViT-B/16.
